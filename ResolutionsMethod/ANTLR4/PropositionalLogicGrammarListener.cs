@@ -41,6 +41,16 @@ public interface IPropositionalLogicGrammarListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterResult([NotNull] PropositionalLogicGrammarParser.ResultContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitResult([NotNull] PropositionalLogicGrammarParser.ResultContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>Disjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
 	/// </summary>
@@ -64,6 +74,18 @@ public interface IPropositionalLogicGrammarListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>Conjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.

@@ -47,6 +47,18 @@ public partial class PropositionalLogicGrammarBaseListener : IPropositionalLogic
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterResult([NotNull] PropositionalLogicGrammarParser.ResultContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitResult([NotNull] PropositionalLogicGrammarParser.ResultContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>Disjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -74,6 +86,20 @@ public partial class PropositionalLogicGrammarBaseListener : IPropositionalLogic
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>Conjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,54 +8,89 @@ using Antlr4.Runtime.Misc;
 
 namespace ResolutionsMethod
 {
-    class PropositionalVisitor : PropositionalLogicGrammarBaseVisitor< List<Disjunct> >
+    class PropositionalVisitor : PropositionalLogicGrammarBaseVisitor<Conjunct>
     {
         public PropositionalVisitor() : base()
         {
         }
 
-        public override List<Disjunct> VisitConjunction([NotNull] PropositionalLogicGrammarParser.ConjunctionContext context)
+        public override Conjunct VisitConjunction([NotNull] PropositionalLogicGrammarParser.ConjunctionContext context)
         {
-            return base.VisitConjunction(context);
+            var l = WalkLeft(context);
+            var r = WalkRight(context);
+            Debug.WriteLine("Conjunction: "); l.Print(); Debug.Write(" & "); r.Print();
+            return l.Add(r);
         }
 
-        public override List<Disjunct> VisitDisjunction([NotNull] PropositionalLogicGrammarParser.DisjunctionContext context)
+        public override Conjunct VisitDisjunction([NotNull] PropositionalLogicGrammarParser.DisjunctionContext context)
         {
-            return base.VisitDisjunction(context);
+            var l = WalkLeft(context);
+            var r = WalkRight(context);
+            Debug.WriteLine("\nDisjunction: "); l.Print(); Debug.Write(" v "); r.Print();
+            return l.Disjunction(r);
         }
 
-        public override List<Disjunct> VisitImplication([NotNull] PropositionalLogicGrammarParser.ImplicationContext context)
+        public override Conjunct VisitImplication([NotNull] PropositionalLogicGrammarParser.ImplicationContext context)
         {
-            return base.VisitImplication(context);
+            var l = WalkLeft(context);
+            var r = WalkRight(context);
+            Debug.WriteLine("Implication: "); l.Print(); Debug.Write(" -> "); r.Print();
+            var notL = l.Negation();
+            return notL.Disjunction(r);
         }
 
-        public override List<Disjunct> VisitInvalid([NotNull] PropositionalLogicGrammarParser.InvalidContext context)
+        public override Conjunct VisitInvalid([NotNull] PropositionalLogicGrammarParser.InvalidContext context)
         {
-            return base.VisitInvalid(context);
+            throw new Exception();
         }
 
-        public override List<Disjunct> VisitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context)
+        public override Conjunct VisitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context)
         {
-            Literal l;
-            return base.VisitLiteral(context);
+            var l = new Literal(context.GetText(), false);
+            var d = new Disjunct(l);
+            var ans = new Conjunct(d);
+            Debug.WriteLine("\nLiteral: "); ans.Print();
+            return ans;
         }
 
-        public override List<Disjunct> VisitParentheses([NotNull] PropositionalLogicGrammarParser.ParenthesesContext context)
+        public override Conjunct VisitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context)
         {
-            return base.VisitParentheses(context);
+            var l = new Literal(context.GetText(), true);
+            var d = new Disjunct(l);
+            var ans = new Conjunct(d);
+            Debug.WriteLine("\nLiteralNegation: "); ans.Print();
+            return ans;
         }
 
-        public override List<Disjunct> VisitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context)
+        public override Conjunct VisitParentheses([NotNull] PropositionalLogicGrammarParser.ParenthesesContext context)
         {
-            return base.VisitStatement(context);
+            var ans = Visit(context.expression());
+            Debug.WriteLine("\nParentheses: "); ans.Print();
+            return ans;
         }
 
-        private List<Disjunct> WalkLeft(PropositionalLogicGrammarParser.ExpressionContext context)
+        public override Conjunct VisitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context)
+        {
+            var neg = Visit(context.result()).Negation();
+            Debug.WriteLine("\nAddin neg "); neg.Print();
+            var res = new Conjunct(neg);
+            foreach (var expr in context.expression())
+            {
+                var addon = Visit(expr);
+                Debug.WriteLine("\nAdding "); addon.Print();
+                res = res.Add(addon);
+                Debug.WriteLine("\nres now is "); res.Print();
+            }
+
+            return res;
+        }
+
+        private Conjunct WalkLeft(PropositionalLogicGrammarParser.ExpressionContext context)
         {
             return Visit(context.GetRuleContext<PropositionalLogicGrammarParser.ExpressionContext>(0));
         }
 
-        private List<Disjunct> WalkRight(PropositionalLogicGrammarParser.ExpressionContext context)
+        private Conjunct WalkRight(PropositionalLogicGrammarParser.ExpressionContext context)
         {
             return Visit(context.GetRuleContext<PropositionalLogicGrammarParser.ExpressionContext>(1));
         }

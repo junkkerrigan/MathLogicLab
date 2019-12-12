@@ -44,6 +44,16 @@ public partial class PropositionalLogicGrammarBaseVisitor<Result> : AbstractPars
 	/// <return>The visitor result.</return>
 	public virtual Result VisitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context) { return VisitChildren(context); }
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitResult([NotNull] PropositionalLogicGrammarParser.ResultContext context) { return VisitChildren(context); }
+	/// <summary>
 	/// Visit a parse tree produced by the <c>Disjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
 	/// <para>
@@ -65,6 +75,17 @@ public partial class PropositionalLogicGrammarBaseVisitor<Result> : AbstractPars
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	public virtual Result VisitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context) { return VisitChildren(context); }
+	/// <summary>
+	/// Visit a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// <para>
+	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
+	/// on <paramref name="context"/>.
+	/// </para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	public virtual Result VisitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by the <c>Conjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.

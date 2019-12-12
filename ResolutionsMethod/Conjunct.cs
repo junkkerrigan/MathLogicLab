@@ -95,7 +95,7 @@ namespace ResolutionsMethod
         {
             foreach (var d in c._disjuncts)
             {
-                Add(new Disjunct(d));
+                Join(new Disjunct(d));
             }
         }
 

@@ -38,6 +38,12 @@ public interface IPropositionalLogicGrammarVisitor<Result> : IParseTreeVisitor<R
 	/// <return>The visitor result.</return>
 	Result VisitStatement([NotNull] PropositionalLogicGrammarParser.StatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="PropositionalLogicGrammarParser.result"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitResult([NotNull] PropositionalLogicGrammarParser.ResultContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>Disjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
 	/// </summary>
@@ -51,6 +57,13 @@ public interface IPropositionalLogicGrammarVisitor<Result> : IParseTreeVisitor<R
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>LiteralNegation</c>
+	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>Conjunction</c>
 	/// labeled alternative in <see cref="PropositionalLogicGrammarParser.expression"/>.
