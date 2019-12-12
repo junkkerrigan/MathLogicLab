@@ -31,6 +31,30 @@ namespace ResolutionsMethod
             }
         }
 
+        public bool Contains(Disjunct d)
+        {
+            bool hasEqual;
+            foreach (var l1 in d._literals)
+            {
+                hasEqual = false;
+                foreach (var l2 in _literals)
+                {
+                    if (l2.IsEqual(l1))
+                    {
+                        hasEqual = true;
+                        break;
+                    }
+                }
+                if (!hasEqual) return false;
+            }
+            return true;
+        }
+
+        public bool IsElementary()
+        {
+            return _literals.Count == 1;
+        }
+
         bool IsContain(Literal l1)
         {
             foreach (var l2 in _literals)
@@ -76,13 +100,6 @@ namespace ResolutionsMethod
 
         public bool HasContraryPair(Disjunct d)
         {
-            if (
-                _literals.Count == 1
-                && d._literals.Count == 1
-                && _literals[0].IsContrary(d._literals[0])
-                )
-                return true;
-            if (_literals.Count == 1 || d._literals.Count == 1) return false;
             foreach (var l1 in _literals)
             {
                 foreach (var l2 in d._literals)

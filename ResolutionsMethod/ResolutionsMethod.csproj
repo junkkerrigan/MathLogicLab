@@ -55,6 +55,7 @@
     <Compile Include="ANTLR4\PropositionalLogicGrammarListener.cs" />
     <Compile Include="ANTLR4\PropositionalLogicGrammarParser.cs" />
     <Compile Include="ANTLR4\PropositionalLogicGrammarVisitor.cs" />
+    <Compile Include="Estimation.cs" />
     <Compile Include="ComplexExpression.cs" />
     <Compile Include="Conjunct.cs" />
     <Compile Include="Disjunct.cs" />

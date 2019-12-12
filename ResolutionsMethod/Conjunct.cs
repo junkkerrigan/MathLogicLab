@@ -34,35 +34,68 @@ namespace ResolutionsMethod
         public bool IsNonContradictory()
         {
             int idx1 = 0, idx2 = 0;
+            var c = new Conjunct(this);
+            Debug.WriteLine("\nNew: "); c.Print();
             while (true)
             {
-                _disjuncts = _disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
+                c._disjuncts = c._disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
                 if (SearchForContraryPair(ref idx1, ref idx2))
                 {
-                    Debug.WriteLine("\nNow conjunct looks like "); Print();
-                    var d1 = _disjuncts[idx1];
-                    var d2 = _disjuncts[idx2];
+                    Debug.WriteLine("\nNow conjunct looks like "); c.Print();
+                    var d1 = c._disjuncts[idx1];
+                    var d2 = c._disjuncts[idx2];
                     Debug.WriteLine("\nHas contrary pair: "); d1.Print();
                     Debug.WriteLine(" and "); d2.Print();
                     var resolventa = Disjunct.GetResolventa(d1, d2);
                     Debug.WriteLine("\nTheir resolventa: "); resolventa.Print();
-                    _disjuncts.RemoveAt(idx2);
-                    _disjuncts.RemoveAt(idx1);
-                    if (!resolventa.IsEmpty()) _disjuncts.Add(resolventa);
+                    c._disjuncts.RemoveAt(idx2);
+                    c._disjuncts.RemoveAt(idx1);
+                    if (!resolventa.IsEmpty()) c._disjuncts.Add(resolventa);
                 }
-                else break;
+                else 
+                {
+                    if (c._disjuncts.Count == 0) return true;
+                    if (IsContraryInstance()) return false;
+                    if (!AddDisjunctFromSource()) return false;
+                }
             }
-            if (IsEmpty()) return true;
-            return false;
+
+            bool IsContraryInstance()
+            {
+                var conclusion = _disjuncts[0];
+                bool isContrIns = true;
+                foreach (var d in c._disjuncts)
+                {
+                    var n = conclusion.Negation();
+                    if (d.Contains(conclusion) || d.IsElementary()) continue;
+                    isContrIns = false;
+                    break;
+                }
+                return isContrIns;
+            }
+
+            bool AddDisjunctFromSource()
+            {
+                var d0 = c._disjuncts[0];
+                foreach (var d in _disjuncts)
+                {
+                    if (d.HasContraryPair(d0))
+                    {
+                        c._disjuncts.Add(new Disjunct(d));
+                        return true;
+                    }
+                }
+                return false;
+            }
 
             bool SearchForContraryPair(ref int i1, ref int i2)
             {
-                for (int i = 0; i < _disjuncts.Count; i++)
+                for (int i = 0; i < c._disjuncts.Count; i++)
                 {
-                    for (int j = i + 1; j < _disjuncts.Count; j++)
+                    for (int j = i + 1; j < c._disjuncts.Count; j++)
                     {
-                        var d1 = _disjuncts[i];
-                        var d2 = _disjuncts[j];
+                        var d1 = c._disjuncts[i];
+                        var d2 = c._disjuncts[j];
                         if (i != j && d1.HasContraryPair(d2))
                         {
                             i1 = i;
