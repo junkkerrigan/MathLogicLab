@@ -76,6 +76,13 @@ namespace ResolutionsMethod
 
         public bool HasContraryPair(Disjunct d)
         {
+            if (
+                _literals.Count == 1
+                && d._literals.Count == 1
+                && _literals[0].IsContrary(d._literals[0])
+                )
+                return true;
+            if (_literals.Count == 1 || d._literals.Count == 1) return false;
             foreach (var l1 in _literals)
             {
                 foreach (var l2 in d._literals)
@@ -102,33 +109,56 @@ namespace ResolutionsMethod
             return false;
         }
 
-        public Disjunct GetResolventa(Disjunct d)
+        public class DisjunctComparer : IEqualityComparer<Disjunct>
+        {
+            public bool Equals(Disjunct x, Disjunct y)
+            {
+                if (x._literals.Count != y._literals.Count) return false;
+                for (int i = 0; i < x._literals.Count; i++)
+                {
+                    var l1 = x._literals[i];
+                    var l2 = y._literals[i];
+                    if (!l1.IsEqual(l2))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            public int GetHashCode(Disjunct obj)
+            {
+                return 0;
+            }
+        }
+
+        public static Disjunct GetResolventa(Disjunct d1, Disjunct d2)
         {
             var resolventa = new Disjunct();
             
-            foreach (var l1 in _literals)
+            foreach (var l1 in d1._literals)
             {
                 bool isAdd = true;
-                foreach (var l2 in d._literals)
+                foreach (var l2 in d2._literals)
                 {
                     if (l1.IsContrary(l2)) isAdd = false;
                 }
                 if (isAdd)
                 {
-                    resolventa.Add(l1);
+                    resolventa.Join(l1);
                 }
             }
 
-            foreach (var l1 in d._literals)
+            foreach (var l1 in d2._literals)
             {
                 bool isAdd = true;
-                foreach (var l2 in _literals)
+                foreach (var l2 in d1._literals)
                 {
                     if (l1.IsContrary(l2)) isAdd = false;
                 }
                 if (isAdd)
                 {
-                    resolventa.Add(l1);
+                    resolventa.Join(l1);
                 }
             }
 

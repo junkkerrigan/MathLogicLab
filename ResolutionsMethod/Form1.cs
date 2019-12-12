@@ -15,6 +15,9 @@ namespace ResolutionsMethod
     public partial class Form1 : Form
     {
         // {AvB, BvC}|=AvC
+        // {~BvAvC, BvC, ~AvC}|=A
+        // {A, A, A}|=A
+        // {PvQ, ~PvR, ~QvS, ~RvSvP, ~SvP}|=P
         public Form1()
         {
             InitializeComponent();
@@ -36,6 +39,7 @@ namespace ResolutionsMethod
                 var parser = new PropositionalLogicGrammarParser(commonTokenStream);
                 var res = parser.statement();
                 var ans = (new PropositionalVisitor()).Visit(res);
+                Console.WriteLine(ans.IsNonContradictory());
             };
             Controls.Add(Formula);
             Controls.Add(Submit);

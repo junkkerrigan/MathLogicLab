@@ -31,6 +31,50 @@ namespace ResolutionsMethod
             _disjuncts.Add(new Disjunct(d));
         }
 
+        public bool IsNonContradictory()
+        {
+            int idx1 = 0, idx2 = 0;
+            while (true)
+            {
+                _disjuncts = _disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
+                if (SearchForContraryPair(ref idx1, ref idx2))
+                {
+                    Debug.WriteLine("\nNow conjunct looks like "); Print();
+                    var d1 = _disjuncts[idx1];
+                    var d2 = _disjuncts[idx2];
+                    Debug.WriteLine("\nHas contrary pair: "); d1.Print();
+                    Debug.WriteLine(" and "); d2.Print();
+                    var resolventa = Disjunct.GetResolventa(d1, d2);
+                    Debug.WriteLine("\nTheir resolventa: "); resolventa.Print();
+                    _disjuncts.RemoveAt(idx2);
+                    _disjuncts.RemoveAt(idx1);
+                    if (!resolventa.IsEmpty()) _disjuncts.Add(resolventa);
+                }
+                else break;
+            }
+            if (IsEmpty()) return true;
+            return false;
+
+            bool SearchForContraryPair(ref int i1, ref int i2)
+            {
+                for (int i = 0; i < _disjuncts.Count; i++)
+                {
+                    for (int j = i + 1; j < _disjuncts.Count; j++)
+                    {
+                        var d1 = _disjuncts[i];
+                        var d2 = _disjuncts[j];
+                        if (i != j && d1.HasContraryPair(d2))
+                        {
+                            i1 = i;
+                            i2 = j;
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
         public Conjunct Negation()
         {
             var ans = new Conjunct();
@@ -95,7 +139,7 @@ namespace ResolutionsMethod
         {
             foreach (var d in c._disjuncts)
             {
-                Join(new Disjunct(d));
+                Join(d);
             }
         }
 

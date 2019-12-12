@@ -55,7 +55,7 @@ namespace ResolutionsMethod
 
         public override Conjunct VisitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context)
         {
-            var l = new Literal(context.GetText(), true);
+            var l = new Literal(context.GetText().Substring(1), true);
             var d = new Disjunct(l);
             var ans = new Conjunct(d);
             Debug.WriteLine("\nLiteralNegation: "); ans.Print();

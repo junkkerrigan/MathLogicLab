@@ -4,7 +4,7 @@ grammar PropositionalLogicGrammar;
 	Parser rules
 */
 
-statement : LCURLYBRACKET (expression COMMA)+ expression RCURLYBRACKET CONCLUSION result EOF;
+statement : LCURLYBRACKET (expression COMMA)* expression RCURLYBRACKET CONCLUSION result EOF;
 
 result : expression;
 
@@ -26,12 +26,12 @@ expression
 
 COMMA : ',';
 CONCLUSION : '|=';
-CONJUNCTION : '&';
-DISJUNCTION : 'v';
+CONJUNCTION : ('&'|'^');
+DISJUNCTION : ('v'|'|');
 IMPLICATION : '->';
 LITERAL : LETTER;
 LITERAL_NEGATION : NEGATION LETTER;
-NEGATION : '~';
+NEGATION : ('~'|'!'|'-');
 LETTER : ('A'..'Z');
 LBRACKET : '(';
 RBRACKET : ')';
