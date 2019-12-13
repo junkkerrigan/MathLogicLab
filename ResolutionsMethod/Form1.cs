@@ -20,18 +20,26 @@ namespace ResolutionsMethod
         // {PvQ, ~PvR, ~QvS, ~RvSvP, ~SvP}|=P
         // {A->B, C->D} |= A&B->C&D
         // {A->B, C->D} |= A&C->B&D
+
+        TextBox Formula;
+        Button Submit;
+        RichTextBox Result;
+
         public Form1()
         {
             InitializeComponent();
-            TextBox Formula = new TextBox()
+            Formula = new TextBox()
             {
-                Size = new Size(300, 30),
-                Location = new Point(200, 200),
+                Size = new Size(400, 30),
+                Location = new Point((ClientSize.Width - 500) / 2, 
+                    (ClientSize.Height - 300) / 2),
+                Font = new Font("Verdana", 20),
             };
-            Button Submit = new Button()
+            Submit = new Button()
             {
-                Size = new Size(50, 20),
+                Size = new Size(80, 30),
                 Location = new Point(Formula.Right + 15, Formula.Top + 5),
+                Text = "Submit",
             };
             Submit.Click += (s, e) =>
             {
@@ -45,15 +53,33 @@ namespace ResolutionsMethod
                 var contraryInstance = new Estimation();
                 bool isNonContr = 
                     ans.IsNonContradictory(ref contraryInstance, allVars);
-                Console.WriteLine($"\n{isNonContr}");
+                Result.Text = "";
+                Result.Text += $"Formula is {isNonContr}";
                 if (!isNonContr)
                 {
-                    Debug.WriteLine("\nContrary is: "); contraryInstance.Print();
+                    Result.Text += $"\nContrary instance is: {contraryInstance.Print()}";
                 }
-
+            };
+            Result = new RichTextBox()
+            {
+                Size = new Size(ClientSize.Width - 200, ClientSize.Height - Formula.Bottom - 80),
+                Location = new Point(100, Formula.Bottom + 40),
+                Font = new Font("Verdana", 20),
             };
             Controls.Add(Formula);
             Controls.Add(Submit);
+            Controls.Add(Result);
+
+            SizeChanged += (s, e) =>
+            {
+                Formula.Location = new Point((ClientSize.Width - 500) / 2,
+                    (ClientSize.Height - 200) / 2);
+                Submit.Location = new Point(Formula.Right + 15, Formula.Top + 5);
+                Result.Size = new Size(ClientSize.Width - 200, ClientSize.Height - Formula.Bottom - 80);
+                Result.Location = new Point(100, Formula.Bottom + 40);
+            };
         }
+
+
     }
 }
