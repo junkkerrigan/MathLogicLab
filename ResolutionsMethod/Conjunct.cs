@@ -31,15 +31,14 @@ namespace ResolutionsMethod
             _disjuncts.Add(new Disjunct(d));
         }
 
-        public bool IsNonContradictory()
+        public bool IsNonContradictory(ref Estimation contrary, HashSet<Literal> used)
         {
             int firstContraryDisjunctIdx = 0, secondContraryDisjunctIdx = 0;
             var conjunctCopy = new Conjunct(this);
-            
-            return ProcessResolutionsMethod();
-            
 
-            bool ProcessResolutionsMethod()
+            return ProcessResolutionsMethod(ref contrary);
+            
+            bool ProcessResolutionsMethod(ref Estimation contraryInstance)
             {
                 while (true)
                 {
@@ -82,10 +81,11 @@ namespace ResolutionsMethod
 
                 var startSingle =
                     conjunctCopy._disjuncts.FindAll(d => d.IsElementary());
-                var contraryInstance = new Estimation();
+                contraryInstance = new Estimation();
                 foreach (var d in startSingle)
                 {
-                    contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
+                    var l = d.Literal(0);
+                    contraryInstance.EstimateVariable(l, Estimation.True);
                 }
 
                 conjunctCopy = new Conjunct(this);
@@ -99,7 +99,8 @@ namespace ResolutionsMethod
                     {
                         if (d.IsElementary())
                         {
-                            if (contraryInstance.GetEstimation(d.Literal(0)) == Estimation.False) return true;
+                            if (contraryInstance.GetEstimation(d.Literal(0)) == Estimation.False) 
+                                return true;
                             else contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
                         }
                         else if (d.Size == 2)
@@ -112,7 +113,8 @@ namespace ResolutionsMethod
                             if (est1 == Estimation.True || est2 == Estimation.True)
                                 continue;
 
-                            if (est1 == Estimation.False && est2 == Estimation.False) return true;
+                            if (est1 == Estimation.False && est2 == Estimation.False)
+                                return true;
 
                             if (est1 == Estimation.Undefined)
                                 contraryInstance.EstimateVariable(l1, Estimation.True);
@@ -154,106 +156,14 @@ namespace ResolutionsMethod
                         break;
                     }
                 }
+
+                foreach (var usedVar in used)
+                {
+                    if (contraryInstance.GetEstimation(usedVar) == Estimation.Undefined)
+                        contraryInstance.EstimateVariable(usedVar, Estimation.True);
+                }
                 return false;
             }
-
-            /*bool IsContraryExists()
-            {
-                foreach (var d in _disjuncts)
-                {
-                    bool containsTrue = false;
-                    int definedCnt = 0;
-                    Literal undefined = new Literal(d.Literal(0));
-                    
-                    for (int i = 0; i < d.Size; i++)
-                    {
-                        int curEstimation = contraryInstance.GetEstimation(d.Literal(i));
-                        if (curEstimation == Estimation.True)
-                        {
-                            containsTrue = true;
-                            break;
-                        }
-                        if (curEstimation == Estimation.False)
-                            definedCnt++;
-                        else
-                        {
-                            undefined = d.Literal(i);
-                        }
-                    }
-
-                    if (containsTrue) continue;
-                    if (d.Size - definedCnt == 1)
-                    {
-                        Debug.WriteLine("\nTrying to estimate "); undefined.Print();
-                        if (contraryInstance.GetEstimation(undefined) == Estimation.False) return false;
-                        contraryInstance.EstimateVariable(undefined, Estimation.True);
-                    }
-                }
-
-                foreach (var d in _disjuncts)
-                {
-                    bool containsTrue = false;
-                    int definedCnt = 0;
-                    Literal undefined = new Literal(d.Literal(0));
-
-                    for (int i = 0; i < d.Size; i++)
-                    {
-                        int curEstimation = contraryInstance.GetEstimation(d.Literal(i));
-                        if (curEstimation == Estimation.True)
-                        {
-                            containsTrue = true;
-                            break;
-                        }
-                        if (curEstimation == Estimation.False)
-                            definedCnt++;
-                        else
-                        {
-                            undefined = d.Literal(i);
-                        }
-                    }
-
-                    if (containsTrue) continue;
-                    if (d.Size - definedCnt == 1)
-                    {
-                        if (contraryInstance.GetEstimation(undefined) == Estimation.False) return false;
-                        contraryInstance.EstimateVariable(undefined, Estimation.True);
-                    }
-                }
-
-                return true;
-            }
-            
-            bool EstimateSingle()
-            {
-                foreach (var d in conjunctCopy._disjuncts)
-                {
-                    if (d.IsElementary())
-                    {
-                        if (contraryInstance.GetEstimation(d.Literal(0)) == Estimation.False) 
-                            return false;
-                        contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
-                    }
-                }
-                return true;
-            }
-
-            bool AddSingleDisjunctFromSource()
-            {
-                foreach (var d1 in conjunctCopy._disjuncts)
-                {
-                    foreach (var d2 in _disjuncts)
-                    {
-                        if (d2.IsElementary() && d1.HasContraryPair(d2))
-                        {
-                            conjunctCopy.Join(d2);
-                            Debug.WriteLine("\nAdding from source: "); d2.Print();
-                            return true;
-                        }
-                    }
-                }
-                
-                return false;
-            }*/
 
             bool SearchForContraryPair(ref int i1, ref int i2)
             {

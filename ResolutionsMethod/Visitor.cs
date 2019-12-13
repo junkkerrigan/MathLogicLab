@@ -10,8 +10,11 @@ namespace ResolutionsMethod
 {
     class PropositionalVisitor : PropositionalLogicGrammarBaseVisitor<Conjunct>
     {
-        public PropositionalVisitor() : base()
+        HashSet<Literal> _usedVars;
+        
+        public PropositionalVisitor(ref HashSet<Literal> usedVars) : base()
         {
+            _usedVars = usedVars;
         }
 
         public override Conjunct VisitConjunction([NotNull] PropositionalLogicGrammarParser.ConjunctionContext context)
@@ -47,6 +50,7 @@ namespace ResolutionsMethod
         public override Conjunct VisitLiteral([NotNull] PropositionalLogicGrammarParser.LiteralContext context)
         {
             var l = new Literal(context.GetText(), false);
+            _usedVars.Add(new Literal(l));
             var d = new Disjunct(l);
             var ans = new Conjunct(d);
             Debug.WriteLine("\nLiteral: "); ans.Print();
@@ -56,6 +60,7 @@ namespace ResolutionsMethod
         public override Conjunct VisitLiteralNegation([NotNull] PropositionalLogicGrammarParser.LiteralNegationContext context)
         {
             var l = new Literal(context.GetText().Substring(1), true);
+            _usedVars.Add(new Literal(l.GetContrary()));
             var d = new Disjunct(l);
             var ans = new Conjunct(d);
             Debug.WriteLine("\nLiteralNegation: "); ans.Print();

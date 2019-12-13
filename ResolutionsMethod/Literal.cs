@@ -25,6 +25,13 @@ namespace ResolutionsMethod
             _isNegation = isNegation;
         }
 
+        public string Name { get => _symbol; }
+
+        public bool IsNegation()
+        {
+            return _isNegation;
+        }
+
         public bool IsEqual(Literal l)
         {
             bool ans = 

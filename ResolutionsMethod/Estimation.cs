@@ -25,6 +25,15 @@ namespace ResolutionsMethod
             _estimations = new Dictionary<Literal, int>();
         }
 
+        public void Print()
+        {
+            foreach (var varEst in _estimations)
+            {
+                if (varEst.Key.IsNegation()) continue;
+                Debug.Write($"τ({varEst.Key.Name}) = {varEst.Value}, ");
+            }
+        }
+
         public void EstimateVariable(Literal l, int est)
         {
             foreach (var es in _estimations)

@@ -18,6 +18,8 @@ namespace ResolutionsMethod
         // {~BvAvC, BvC, ~AvC}|=A
         // {A, A, A}|=A
         // {PvQ, ~PvR, ~QvS, ~RvSvP, ~SvP}|=P
+        // {A->B, C->D} |= A&B->C&D
+        // {A->B, C->D} |= A&C->B&D
         public Form1()
         {
             InitializeComponent();
@@ -38,8 +40,17 @@ namespace ResolutionsMethod
                 var commonTokenStream = new CommonTokenStream(lexer);
                 var parser = new PropositionalLogicGrammarParser(commonTokenStream);
                 var res = parser.statement();
-                var ans = (new PropositionalVisitor()).Visit(res);
-                Console.WriteLine($"\n{ans.IsNonContradictory()}");
+                HashSet<Literal> allVars = new HashSet<Literal>();
+                var ans = (new PropositionalVisitor(ref allVars)).Visit(res);
+                var contraryInstance = new Estimation();
+                bool isNonContr = 
+                    ans.IsNonContradictory(ref contraryInstance, allVars);
+                Console.WriteLine($"\n{isNonContr}");
+                if (!isNonContr)
+                {
+                    Debug.WriteLine("\nContrary is: "); contraryInstance.Print();
+                }
+
             };
             Controls.Add(Formula);
             Controls.Add(Submit);
