@@ -47,8 +47,9 @@ namespace ResolutionsMethod
 
         public void Print()
         {
-            if (_isNegation) Debug.Write("~");
-            Debug.Write($"({_symbol})");
+            if (_isNegation) Debug.Write("(~");
+            else Debug.Write("(");
+            Debug.Write($"{_symbol})");
         }
     }
 }

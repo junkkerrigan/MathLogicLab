@@ -39,7 +39,7 @@ namespace ResolutionsMethod
                 var parser = new PropositionalLogicGrammarParser(commonTokenStream);
                 var res = parser.statement();
                 var ans = (new PropositionalVisitor()).Visit(res);
-                Console.WriteLine(ans.IsNonContradictory());
+                Console.WriteLine($"\n{ans.IsNonContradictory()}");
             };
             Controls.Add(Formula);
             Controls.Add(Submit);

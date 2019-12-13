@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,26 +13,37 @@ namespace ResolutionsMethod
         public static int False = 0;
         public static int Undefined = -1;
 
-        Dictionary<string, int> _estimations;
+        Dictionary<Literal, int> _estimations;
+
+        public static int Not(int val)
+        {
+            return 1 - val;
+        }
 
         public Estimation()
         {
-            _estimations = new Dictionary<string, int>();
+            _estimations = new Dictionary<Literal, int>();
         }
 
-        public void AddVariable(string name)
+        public void EstimateVariable(Literal l, int est)
         {
-            AddVariable(name, Undefined);
+            foreach (var es in _estimations)
+            {
+                if (es.Key.IsEqual(l)) return;
+            }
+            _estimations.Add(new Literal(l), est);
+            _estimations.Add(new Literal(l.GetContrary()), Not(est));
         }
 
-        public void AddVariable(string name, int est)
+        public int GetEstimation(Literal l)
         {
-            _estimations.Add(name, est);
+            foreach (var es in _estimations)
+            {
+                if (es.Key.IsEqual(l)) return es.Value;
+            }
+            return Undefined;
         }
 
-        public void EstimateVariable(string name, int est)
-        {
-            _estimations[name] = est;
-        }
+        // public 
     }
 }

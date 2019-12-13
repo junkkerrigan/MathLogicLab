@@ -50,6 +50,13 @@ namespace ResolutionsMethod
             return true;
         }
 
+        public Literal Literal(int idx)
+        {
+            return _literals[idx];
+        }
+
+        public int Size { get => _literals.Count; }
+
         public bool IsElementary()
         {
             return _literals.Count == 1;

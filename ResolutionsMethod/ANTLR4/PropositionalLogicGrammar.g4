@@ -10,9 +10,9 @@ result : expression;
 
 expression 
 	: LBRACKET expression RBRACKET #Parentheses
-	| expression IMPLICATION expression #Implication
-	| expression DISJUNCTION expression #Disjunction
 	| expression CONJUNCTION expression #Conjunction
+	| expression DISJUNCTION expression #Disjunction
+	| expression IMPLICATION expression #Implication
 	| LITERAL_NEGATION #LiteralNegation
 	| LITERAL #Literal
 	| INVALID #Invalid

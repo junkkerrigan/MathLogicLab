@@ -438,11 +438,11 @@ public partial class PropositionalLogicGrammarParser : Parser {
 					switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 					case 1:
 						{
-						_localctx = new ImplicationContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new ConjunctionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 33;
 						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
-						State = 34; Match(IMPLICATION);
+						State = 34; Match(CONJUNCTION);
 						State = 35; expression(7);
 						}
 						break;
@@ -458,11 +458,11 @@ public partial class PropositionalLogicGrammarParser : Parser {
 						break;
 					case 3:
 						{
-						_localctx = new ConjunctionContext(new ExpressionContext(_parentctx, _parentState));
+						_localctx = new ImplicationContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
 						State = 39;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 40; Match(CONJUNCTION);
+						State = 40; Match(IMPLICATION);
 						State = 41; expression(5);
 						}
 						break;
@@ -534,10 +534,10 @@ public partial class PropositionalLogicGrammarParser : Parser {
 		'\x3', '\x2', '\x2', '\x2', '!', '\x1E', '\x3', '\x2', '\x2', '\x2', '!', 
 		'\x1F', '\x3', '\x2', '\x2', '\x2', '!', ' ', '\x3', '\x2', '\x2', '\x2', 
 		'\"', '.', '\x3', '\x2', '\x2', '\x2', '#', '$', '\f', '\b', '\x2', '\x2', 
-		'$', '%', '\a', '\a', '\x2', '\x2', '%', '-', '\x5', '\x6', '\x4', '\t', 
+		'$', '%', '\a', '\x5', '\x2', '\x2', '%', '-', '\x5', '\x6', '\x4', '\t', 
 		'&', '\'', '\f', '\a', '\x2', '\x2', '\'', '(', '\a', '\x6', '\x2', '\x2', 
 		'(', '-', '\x5', '\x6', '\x4', '\b', ')', '*', '\f', '\x6', '\x2', '\x2', 
-		'*', '+', '\a', '\x5', '\x2', '\x2', '+', '-', '\x5', '\x6', '\x4', '\a', 
+		'*', '+', '\a', '\a', '\x2', '\x2', '+', '-', '\x5', '\x6', '\x4', '\a', 
 		',', '#', '\x3', '\x2', '\x2', '\x2', ',', '&', '\x3', '\x2', '\x2', '\x2', 
 		',', ')', '\x3', '\x2', '\x2', '\x2', '-', '\x30', '\x3', '\x2', '\x2', 
 		'\x2', '.', ',', '\x3', '\x2', '\x2', '\x2', '.', '/', '\x3', '\x2', '\x2', 

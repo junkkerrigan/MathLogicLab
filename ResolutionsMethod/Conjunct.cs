@@ -33,69 +33,236 @@ namespace ResolutionsMethod
 
         public bool IsNonContradictory()
         {
-            int idx1 = 0, idx2 = 0;
-            var c = new Conjunct(this);
-            Debug.WriteLine("\nNew: "); c.Print();
-            while (true)
-            {
-                c._disjuncts = c._disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
-                if (SearchForContraryPair(ref idx1, ref idx2))
-                {
-                    Debug.WriteLine("\nNow conjunct looks like "); c.Print();
-                    var d1 = c._disjuncts[idx1];
-                    var d2 = c._disjuncts[idx2];
-                    Debug.WriteLine("\nHas contrary pair: "); d1.Print();
-                    Debug.WriteLine(" and "); d2.Print();
-                    var resolventa = Disjunct.GetResolventa(d1, d2);
-                    Debug.WriteLine("\nTheir resolventa: "); resolventa.Print();
-                    c._disjuncts.RemoveAt(idx2);
-                    c._disjuncts.RemoveAt(idx1);
-                    if (!resolventa.IsEmpty()) c._disjuncts.Add(resolventa);
-                }
-                else 
-                {
-                    if (c._disjuncts.Count == 0) return true;
-                    if (IsContraryInstance()) return false;
-                    if (!AddDisjunctFromSource()) return false;
-                }
-            }
+            int firstContraryDisjunctIdx = 0, secondContraryDisjunctIdx = 0;
+            var conjunctCopy = new Conjunct(this);
+            
+            return ProcessResolutionsMethod();
+            
 
-            bool IsContraryInstance()
+            bool ProcessResolutionsMethod()
             {
-                var conclusion = _disjuncts[0];
-                bool isContrIns = true;
-                foreach (var d in c._disjuncts)
+                while (true)
                 {
-                    var n = conclusion.Negation();
-                    if (d.Contains(conclusion) || d.IsElementary()) continue;
-                    isContrIns = false;
-                    break;
-                }
-                return isContrIns;
-            }
-
-            bool AddDisjunctFromSource()
-            {
-                var d0 = c._disjuncts[0];
-                foreach (var d in _disjuncts)
-                {
-                    if (d.HasContraryPair(d0))
+                    conjunctCopy._disjuncts = 
+                        conjunctCopy._disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
+                
+                    if (SearchForContraryPair(ref firstContraryDisjunctIdx, ref secondContraryDisjunctIdx))
                     {
-                        c._disjuncts.Add(new Disjunct(d));
-                        return true;
+                        Debug.WriteLine("\nNow conjunct looks like "); conjunctCopy.Print();
+                    
+                        var d1 = conjunctCopy._disjuncts[firstContraryDisjunctIdx];
+                        var d2 = conjunctCopy._disjuncts[secondContraryDisjunctIdx];
+                    
+                        Debug.WriteLine("\nHas contrary pair: "); d1.Print();
+                        Debug.WriteLine(" and "); d2.Print();
+                    
+                        var resolventa = Disjunct.GetResolventa(d1, d2);
+                    
+                        Debug.WriteLine("\nTheir resolventa: "); resolventa.Print();
+
+                        if (d1.IsElementary() && d2.IsElementary())
+                        {
+                            conjunctCopy._disjuncts.Remove(d1);
+                            conjunctCopy._disjuncts.Remove(d2);
+                        }
+                        else
+                        {
+                            if (!d1.IsElementary()) conjunctCopy._disjuncts.Remove(d1);// At(firstContraryDisjunctIdx);
+                            if (!d2.IsElementary()) conjunctCopy._disjuncts.Remove(d2); // At(secondContraryDisjunctIdx);
+                        }
+
+                        if (!resolventa.IsEmpty()) conjunctCopy._disjuncts.Add(resolventa);
+                    }
+                    else 
+                    {
+                        if (conjunctCopy._disjuncts.Count == 0) return true;
+                        break;
+                    }
+                }
+
+                var startSingle =
+                    conjunctCopy._disjuncts.FindAll(d => d.IsElementary());
+                var contraryInstance = new Estimation();
+                foreach (var d in startSingle)
+                {
+                    contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
+                }
+
+                conjunctCopy = new Conjunct(this);
+
+                while (true)
+                {
+                    conjunctCopy._disjuncts =
+                        conjunctCopy._disjuncts.Distinct(new Disjunct.DisjunctComparer()).ToList();
+
+                    foreach (var d in conjunctCopy._disjuncts)
+                    {
+                        if (d.IsElementary())
+                        {
+                            if (contraryInstance.GetEstimation(d.Literal(0)) == Estimation.False) return true;
+                            else contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
+                        }
+                        else if (d.Size == 2)
+                        {
+                            var l1 = d.Literal(0);
+                            var l2 = d.Literal(1);
+
+                            int est1 = contraryInstance.GetEstimation(l1);
+                            int est2 = contraryInstance.GetEstimation(l2);
+                            if (est1 == Estimation.True || est2 == Estimation.True)
+                                continue;
+
+                            if (est1 == Estimation.False && est2 == Estimation.False) return true;
+
+                            if (est1 == Estimation.Undefined)
+                                contraryInstance.EstimateVariable(l1, Estimation.True);
+                            else if (est2 == Estimation.Undefined)
+                                contraryInstance.EstimateVariable(l2, Estimation.True);
+                        }
+                    }
+
+                    if (SearchForContraryPair(ref firstContraryDisjunctIdx, ref secondContraryDisjunctIdx))
+                    {
+                        Debug.WriteLine("\nNow conjunct looks like "); conjunctCopy.Print();
+
+                        var d1 = conjunctCopy._disjuncts[firstContraryDisjunctIdx];
+                        var d2 = conjunctCopy._disjuncts[secondContraryDisjunctIdx];
+
+                        Debug.WriteLine("\nHas contrary pair: "); d1.Print();
+                        Debug.WriteLine(" and "); d2.Print();
+
+                        var resolventa = Disjunct.GetResolventa(d1, d2);
+
+                        Debug.WriteLine("\nTheir resolventa: "); resolventa.Print();
+
+                        if (d1.IsElementary() && d2.IsElementary())
+                        {
+                            conjunctCopy._disjuncts.Remove(d1);
+                            conjunctCopy._disjuncts.Remove(d2);
+                        }
+                        else
+                        {
+                            if (!d1.IsElementary()) conjunctCopy._disjuncts.Remove(d1);// At(firstContraryDisjunctIdx);
+                            if (!d2.IsElementary()) conjunctCopy._disjuncts.Remove(d2); // At(secondContraryDisjunctIdx);
+                        }
+
+                        if (!resolventa.IsEmpty()) conjunctCopy._disjuncts.Add(resolventa);
+                    }
+                    else
+                    {
+                        if (conjunctCopy._disjuncts.Count == 0) return true;
+                        break;
                     }
                 }
                 return false;
             }
 
+            /*bool IsContraryExists()
+            {
+                foreach (var d in _disjuncts)
+                {
+                    bool containsTrue = false;
+                    int definedCnt = 0;
+                    Literal undefined = new Literal(d.Literal(0));
+                    
+                    for (int i = 0; i < d.Size; i++)
+                    {
+                        int curEstimation = contraryInstance.GetEstimation(d.Literal(i));
+                        if (curEstimation == Estimation.True)
+                        {
+                            containsTrue = true;
+                            break;
+                        }
+                        if (curEstimation == Estimation.False)
+                            definedCnt++;
+                        else
+                        {
+                            undefined = d.Literal(i);
+                        }
+                    }
+
+                    if (containsTrue) continue;
+                    if (d.Size - definedCnt == 1)
+                    {
+                        Debug.WriteLine("\nTrying to estimate "); undefined.Print();
+                        if (contraryInstance.GetEstimation(undefined) == Estimation.False) return false;
+                        contraryInstance.EstimateVariable(undefined, Estimation.True);
+                    }
+                }
+
+                foreach (var d in _disjuncts)
+                {
+                    bool containsTrue = false;
+                    int definedCnt = 0;
+                    Literal undefined = new Literal(d.Literal(0));
+
+                    for (int i = 0; i < d.Size; i++)
+                    {
+                        int curEstimation = contraryInstance.GetEstimation(d.Literal(i));
+                        if (curEstimation == Estimation.True)
+                        {
+                            containsTrue = true;
+                            break;
+                        }
+                        if (curEstimation == Estimation.False)
+                            definedCnt++;
+                        else
+                        {
+                            undefined = d.Literal(i);
+                        }
+                    }
+
+                    if (containsTrue) continue;
+                    if (d.Size - definedCnt == 1)
+                    {
+                        if (contraryInstance.GetEstimation(undefined) == Estimation.False) return false;
+                        contraryInstance.EstimateVariable(undefined, Estimation.True);
+                    }
+                }
+
+                return true;
+            }
+            
+            bool EstimateSingle()
+            {
+                foreach (var d in conjunctCopy._disjuncts)
+                {
+                    if (d.IsElementary())
+                    {
+                        if (contraryInstance.GetEstimation(d.Literal(0)) == Estimation.False) 
+                            return false;
+                        contraryInstance.EstimateVariable(d.Literal(0), Estimation.True);
+                    }
+                }
+                return true;
+            }
+
+            bool AddSingleDisjunctFromSource()
+            {
+                foreach (var d1 in conjunctCopy._disjuncts)
+                {
+                    foreach (var d2 in _disjuncts)
+                    {
+                        if (d2.IsElementary() && d1.HasContraryPair(d2))
+                        {
+                            conjunctCopy.Join(d2);
+                            Debug.WriteLine("\nAdding from source: "); d2.Print();
+                            return true;
+                        }
+                    }
+                }
+                
+                return false;
+            }*/
+
             bool SearchForContraryPair(ref int i1, ref int i2)
             {
-                for (int i = 0; i < c._disjuncts.Count; i++)
+                for (int i = 0; i < conjunctCopy._disjuncts.Count; i++)
                 {
-                    for (int j = i + 1; j < c._disjuncts.Count; j++)
+                    for (int j = i + 1; j < conjunctCopy._disjuncts.Count; j++)
                     {
-                        var d1 = c._disjuncts[i];
-                        var d2 = c._disjuncts[j];
+                        var d1 = conjunctCopy._disjuncts[i];
+                        var d2 = conjunctCopy._disjuncts[j];
                         if (i != j && d1.HasContraryPair(d2))
                         {
                             i1 = i;

@@ -18,7 +18,7 @@ namespace ResolutionsMethod
         {
             var l = WalkLeft(context);
             var r = WalkRight(context);
-            Debug.WriteLine("Conjunction: "); l.Print(); Debug.Write(" & "); r.Print();
+            Debug.WriteLine("\nConjunction: "); l.Print(); Debug.Write(" & "); r.Print();
             return l.Add(r);
         }
 
@@ -34,7 +34,7 @@ namespace ResolutionsMethod
         {
             var l = WalkLeft(context);
             var r = WalkRight(context);
-            Debug.WriteLine("Implication: "); l.Print(); Debug.Write(" -> "); r.Print();
+            Debug.WriteLine("\nImplication: "); l.Print(); Debug.Write(" -> "); r.Print();
             var notL = l.Negation();
             return notL.Disjunction(r);
         }
